@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+*.venv
+
+# Editor & IDE files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Logs & Database files
+*.log
+db.sqlite3
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+
+# Environment variables
+.env
+*.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Cache & temporary files
+*.bak
+*.swp
+*.tmp
+
+# Testing
+.coverage
+.tox/
+.nox/
+
+# Docker
+*.container
+
+# Misc
+.DS_Store
+Thumbs.db
