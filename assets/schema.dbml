@@ -1,0 +1,49 @@
+// Role enum for user types
+Enum role_enum {
+  "admin"
+  "user"
+}
+
+// Countries table: Stores country information
+Table countries {
+  id          int          [primary key, increment]
+  name        varchar(255) [unique, not null]
+  code        varchar(2)   [unique, not null] // ISO country code
+  created_at  timestamp    [default: "CURRENT_TIMESTAMP"]
+}
+
+// Users table: Stores registered user information
+Table users {
+  id         int          [primary key, increment]
+  first_name varchar(255) [not null]
+  last_name  varchar(255) [not null]
+  email      varchar(255) [unique, not null]
+  password   varchar(255) [not null] // Hashed password
+  role_id    role_enum    [not null, default: "user"]
+  created_at timestamp    [default: "CURRENT_TIMESTAMP"]
+}
+
+// Vacations table: Stores vacation destinations and details
+Table vacations {
+  id          int          [primary key, increment]
+  country_id  int          [not null, ref: > countries.id]
+  destination varchar(255) [not null]
+  description text
+  start_date  date         [not null]
+  end_date    date         [not null]
+  price       decimal(10,2) [not null]
+  image_url   varchar(500)
+  created_at  timestamp    [default: "CURRENT_TIMESTAMP"]
+}
+
+// Likes table: Tracks which users liked which vacations
+Table likes {
+  id          int          [primary key, increment]
+  user_id     int          [not null, ref: > users.id]
+  vacation_id int          [not null, ref: > vacations.id]
+  created_at  timestamp    [default: "CURRENT_TIMESTAMP"]
+  
+  indexes {
+    (user_id, vacation_id) [unique] // Prevents duplicate likes
+  }
+}
