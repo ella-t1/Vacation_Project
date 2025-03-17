@@ -1,0 +1,3 @@
+"""
+Vacation Project package.
+""" 
