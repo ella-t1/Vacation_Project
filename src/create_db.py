@@ -1,7 +1,7 @@
 import os
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from config import DB_CONFIG, DatabaseConnection
+from src.config import DB_CONFIG, DatabaseConnection
 
 def get_postgres_params():
     """Get connection parameters for postgres database (for initial connection)."""
@@ -51,6 +51,16 @@ def init_schema():
         
         # Use DatabaseConnection context manager
         with DatabaseConnection() as cur:
+            # Drop existing objects
+            cur.execute("""
+                DROP TYPE IF EXISTS role_enum CASCADE;
+                DROP TABLE IF EXISTS likes CASCADE;
+                DROP TABLE IF EXISTS vacations CASCADE;
+                DROP TABLE IF EXISTS users CASCADE;
+                DROP TABLE IF EXISTS countries CASCADE;
+            """)
+            
+            # Create new schema
             cur.execute(schema_sql)
             
         print("Schema initialized successfully!")
@@ -76,7 +86,7 @@ def validate_tables():
                 FROM information_schema.tables 
                 WHERE table_schema = 'public'
             """)
-            existing_tables = {row[0] for row in cur.fetchall()}
+            existing_tables = {row['table_name'] for row in cur.fetchall()}
             
             # Check each required table
             for table, columns in required_tables.items():
@@ -89,7 +99,7 @@ def validate_tables():
                     FROM information_schema.columns 
                     WHERE table_name = '{table}'
                 """)
-                existing_columns = {row[0] for row in cur.fetchall()}
+                existing_columns = {row['column_name'] for row in cur.fetchall()}
                 
                 missing_columns = set(columns) - existing_columns
                 if missing_columns:

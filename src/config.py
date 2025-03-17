@@ -1,43 +1,42 @@
 import os
-from dotenv import load_dotenv
+from contextlib import contextmanager
 import psycopg2
+from psycopg2.extras import RealDictCursor
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
 # Database configuration
 DB_CONFIG = {
-    'dbname': os.getenv('POSTGRES_DATABASE', 'vacation_db'),
-    'user': os.getenv('POSTGRES_USER', 'db_admin'),
-    'password': os.getenv('POSTGRES_PASSWORD', 'pg_admin123'),
-    'host': os.getenv('POSTGRES_HOST', 'localhost'),
-    'port': os.getenv('POSTGRES_PORT', '5432')
+    'dbname': os.getenv('POSTGRES_DATABASE'),
+    'user': os.getenv('POSTGRES_USER'),
+    'password': os.getenv('POSTGRES_PASSWORD'),
+    'host': os.getenv('POSTGRES_HOST'),
+    'port': os.getenv('POSTGRES_PORT', '5432'),
 }
 
-class DatabaseConnection:
-    """Context manager for database connections"""
-    def __init__(self):
-        self.conn = None
-        self.cur = None
+# Add SSL mode only if using Neon database
+if 'neon' in os.getenv('POSTGRES_HOST', ''):
+    DB_CONFIG['sslmode'] = 'require'
 
-    def __enter__(self):
-        try:
-            self.conn = psycopg2.connect(**DB_CONFIG)
-            self.cur = self.conn.cursor()
-            return self.cur
-        except Exception as e:
-            print(f"Error connecting to database: {e}")
-            raise
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        try:
-            if exc_type is not None:
-                self.conn.rollback()
-            else:
-                self.conn.commit()
-        finally:
-            if self.cur:
-                self.cur.close()
-            if self.conn:
-                self.conn.close()
+@contextmanager
+def DatabaseConnection():
+    """Context manager for database connections."""
+    conn = None
+    try:
+        conn = psycopg2.connect(**DB_CONFIG)
+        # Create cursor with RealDictCursor to return results as dictionaries
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        yield cur
+        conn.commit()
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        raise
+    finally:
+        if conn:
+            if 'cur' in locals():
+                cur.close()
+            conn.close()
 
