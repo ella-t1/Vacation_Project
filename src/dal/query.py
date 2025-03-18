@@ -1,6 +1,6 @@
 import bcrypt
 from typing import Optional, List, Dict, Any, Tuple
-from src.config import DatabaseConnection
+from config import DatabaseConnection
 
 def hash_password(password: str) -> str:
     """Hash a password using bcrypt."""

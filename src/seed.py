@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from src.dal.query import query, hash_password
+from dal.query import query, hash_password
 
 def get_sample_users():
     """Return sample user data."""

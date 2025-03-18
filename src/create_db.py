@@ -1,7 +1,7 @@
 import os
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from src.config import DB_CONFIG, DatabaseConnection
+from config import DB_CONFIG, DatabaseConnection
 
 def get_postgres_params():
     """Get connection parameters for postgres database (for initial connection)."""
