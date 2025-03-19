@@ -40,8 +40,8 @@ def setup_test_db():
 def cleanup_test_data():
     """Clean up test data after each test."""
     yield
-    # Clean up all tables except admin user
-    query("DELETE FROM likes", commit=True)
-    query("DELETE FROM vacations", commit=True)
-    query("DELETE FROM users WHERE email != 'admin@example.com'", commit=True)
-    query("DELETE FROM countries", commit=True) 
+    # Clean up all tables except admin user in correct order
+    query("DELETE FROM likes", commit=True)  # Delete likes first
+    query("DELETE FROM vacations", commit=True)  # Then vacations
+    query("DELETE FROM users WHERE email != 'admin@example.com'", commit=True)  # Then users
+    query("DELETE FROM countries", commit=True)  # Finally countries 

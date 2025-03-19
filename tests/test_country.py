@@ -29,17 +29,23 @@ def setup_db():
     yield
     close_pool()
 
+@pytest.fixture
+def country_service():
+    """Get a CountryService instance."""
+    return CountryService()
+
 @pytest.fixture(autouse=True)
 def cleanup_countries():
     """Clean up countries table after each test."""
     yield
-    # Clean up vacations first due to foreign key constraints
-    query("DELETE FROM vacations", commit=True)
-    query("DELETE FROM countries", commit=True)
+    # Clean up in correct order to avoid foreign key violations
+    query("DELETE FROM likes", commit=True)  # Delete likes first
+    query("DELETE FROM vacations", commit=True)  # Then vacations
+    query("DELETE FROM countries", commit=True)  # Finally countries
 
 # Model Tests
 def test_country_creation():
-    """Test creating a Country instance."""
+    """Test creating a Country object."""
     country = Country(name="United States", code="US")
     assert country.name == "United States"
     assert country.code == "US"
