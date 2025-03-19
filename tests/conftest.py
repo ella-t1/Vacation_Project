@@ -1,71 +1,47 @@
+"""
+Test configuration and fixtures.
+"""
 import pytest
-import os
-import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from dotenv import load_dotenv
+from src.config import get_test_config
+from src.query import init_pool, close_pool, query
 
-def get_postgres_params():
-    """Get connection parameters for postgres database."""
-    return {
-        'dbname': 'postgres',
-        'user': os.getenv('POSTGRES_USER'),
-        'password': os.getenv('POSTGRES_PASSWORD'),
-        'host': os.getenv('POSTGRES_HOST'),
-        'port': os.getenv('POSTGRES_PORT', '5432')
-    }
 
-def create_test_database():
-    """Create test database if it doesn't exist."""
-    postgres_params = get_postgres_params()
-    test_db_name = os.getenv('POSTGRES_DATABASE')
+@pytest.fixture(scope="session", autouse=True)
+def setup_test_db():
+    """Initialize test database for all tests."""
+    print("\nInitializing test database...")  # Debug print
+    config, _ = get_test_config()
+    init_pool(config)
     
-    try:
-        # Connect to postgres database
-        conn = psycopg2.connect(**postgres_params)
-        conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-        cur = conn.cursor()
-        
-        # Check if database exists
-        cur.execute("SELECT 1 FROM pg_database WHERE datname = %s", (test_db_name,))
-        exists = cur.fetchone()
-        
-        if not exists:
-            print(f"Creating test database {test_db_name}...")
-            cur.execute(f"CREATE DATABASE {test_db_name}")
-            print(f"Test database {test_db_name} created successfully!")
-        else:
-            print(f"Test database {test_db_name} already exists.")
-            
-    except Exception as e:
-        print(f"Error creating test database: {e}")
-        raise
-    finally:
-        if 'cur' in locals():
-            cur.close()
-        if 'conn' in locals():
-            conn.close()
+    # Drop existing schema
+    cleanup_sql = """
+        DROP TYPE IF EXISTS role_enum CASCADE;
+        DROP TABLE IF EXISTS likes CASCADE;
+        DROP TABLE IF EXISTS vacations CASCADE;
+        DROP TABLE IF EXISTS users CASCADE;
+        DROP TABLE IF EXISTS countries CASCADE;
+    """
+    query(cleanup_sql, commit=True)
+    
+    # Initialize schema
+    print("Creating schema...")  # Debug print
+    with open('SQL/schema.sql', 'r') as f:
+        schema_sql = f.read()
+        query(schema_sql, commit=True)
+    print("Schema created successfully")  # Debug print
+    
+    yield
+    
+    print("Cleaning up test database...")  # Debug print
+    close_pool()
 
-def pytest_configure(config):
-    """Load test environment variables before any tests run."""
-    # Load test environment variables from .env.test
-    load_dotenv('.env.test', override=True)  # Add override=True to ensure test env vars take precedence
-    
-    # Verify test environment variables are set
-    required_vars = [
-        'POSTGRES_USER',
-        'POSTGRES_HOST',
-        'POSTGRES_PASSWORD',
-        'POSTGRES_DATABASE'
-    ]
-    
-    missing_vars = [var for var in required_vars if not os.getenv(var)]
-    if missing_vars:
-        raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
-    
-    # Create test database
-    create_test_database()
 
-@pytest.fixture(scope="session")
-def test_db_name():
-    """Get the test database name."""
-    return os.getenv('POSTGRES_DATABASE', 'vacation_db_test') 
+@pytest.fixture(autouse=True)
+def cleanup_test_data():
+    """Clean up test data after each test."""
+    yield
+    # Clean up all tables except admin user
+    query("DELETE FROM likes", commit=True)
+    query("DELETE FROM vacations", commit=True)
+    query("DELETE FROM users WHERE email != 'admin@example.com'", commit=True)
+    query("DELETE FROM countries", commit=True) 
