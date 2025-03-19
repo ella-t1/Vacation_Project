@@ -1,3 +1,3 @@
 """
-Vacation Project package.
+Main package initialization.
 """ 
