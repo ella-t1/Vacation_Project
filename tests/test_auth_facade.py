@@ -3,7 +3,7 @@ import pytest
 from datetime import datetime
 from src.facades.AuthFacade import AuthFacade
 from src.models.User import User
-from src.DAL.UserService import UserService
+from src.dal.UserService import UserService
 from src.query import query
 from src.config import get_test_config
 

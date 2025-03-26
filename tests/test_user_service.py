@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime
 from src.models.User import User
-from src.DAL.UserService import UserService
+from src.dal.UserService import UserService
 from src.config import get_test_config
 from src.query import init_pool, close_pool, query
 

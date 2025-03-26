@@ -8,9 +8,9 @@ from decimal import Decimal
 
 from src.models.Vacation import Vacation
 from src.models.Like import Like
-from src.DAL.VacationService import VacationService
-from src.DAL.LikeService import LikeService
-from src.DAL.CountryService import CountryService
+from src.dal.VacationService import VacationService
+from src.dal.LikeService import LikeService
+from src.dal.CountryService import CountryService
 
 
 class VacationFacade:

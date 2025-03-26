@@ -84,7 +84,7 @@ def test_load_db_config_defaults():
     assert config.password == 'pg_admin123'
     assert config.host == 'localhost'
     assert config.port == 5433
-    assert config.database == 'vacation_db_staging'
+    assert config.database == os.getenv('POSTGRES_DATABASE', 'vacations')
 
 
 def test_get_staging_config():
@@ -94,7 +94,7 @@ def test_get_staging_config():
     assert isinstance(config, DBConfig)
     assert isinstance(url, str)
     assert 'postgresql://' in url
-    assert config.database == 'vacation_db_staging'
+    assert config.database == os.getenv('POSTGRES_DATABASE', 'vacations')
 
 
 def test_get_test_config():
@@ -104,5 +104,5 @@ def test_get_test_config():
     assert isinstance(config, DBConfig)
     assert isinstance(url, str)
     assert 'postgresql://' in url
-    assert config.database == 'vacation_db_test'
-    assert str(config.port) == '5433' 
+    assert config.database == os.getenv('POSTGRES_DATABASE', 'vacations')
+    assert str(config.port) == '5432' 

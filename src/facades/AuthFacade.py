@@ -2,8 +2,8 @@
 Authentication facade that provides a high-level interface for authentication operations.
 """
 from typing import Dict, Tuple, Optional
-from src.DAL.AuthService import AuthService
-from src.DAL.UserService import UserService
+from src.dal.AuthService import AuthService
+from src.dal.UserService import UserService
 
 
 class AuthFacade:

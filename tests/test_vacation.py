@@ -3,8 +3,8 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal
 from src.models.Vacation import Vacation
 from src.models.Country import Country
-from src.DAL.VacationService import VacationService
-from src.DAL.CountryService import CountryService
+from src.dal.VacationService import VacationService
+from src.dal.CountryService import CountryService
 from src.config import get_test_config
 from src.query import init_pool, close_pool, query
 

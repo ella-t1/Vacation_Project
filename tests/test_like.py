@@ -4,13 +4,13 @@ Tests for the Like model and service.
 import pytest
 from datetime import datetime
 from src.models.Like import Like
-from src.DAL.LikeService import LikeService
+from src.dal.LikeService import LikeService
 from src.models.User import User
 from src.models.Vacation import Vacation
 from src.models.Country import Country
-from src.DAL.UserService import UserService
-from src.DAL.VacationService import VacationService
-from src.DAL.CountryService import CountryService
+from src.dal.UserService import UserService
+from src.dal.VacationService import VacationService
+from src.dal.CountryService import CountryService
 from src.config import get_test_config
 from src.query import init_pool, close_pool, query
 

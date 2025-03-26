@@ -65,7 +65,7 @@ def load_db_config(env_file=None):
         password=os.getenv('POSTGRES_PASSWORD', 'pg_admin123'),
         host=os.getenv('POSTGRES_HOST', 'localhost'),
         port=int(os.getenv('POSTGRES_PORT', '5433')),
-        database=os.getenv('POSTGRES_DATABASE', 'vacation_db_staging')
+        database=os.getenv('POSTGRES_DATABASE', 'vacations')
     )
 
 

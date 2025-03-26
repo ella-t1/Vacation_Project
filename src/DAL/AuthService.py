@@ -6,7 +6,7 @@ from typing import Optional, Tuple, Dict, Any
 from datetime import datetime, timedelta, UTC
 import jwt
 from src.models.User import User
-from src.DAL.UserService import UserService
+from src.dal.UserService import UserService
 
 
 class AuthService:

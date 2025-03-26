@@ -5,7 +5,7 @@ import pytest
 from datetime import date, timedelta
 from decimal import Decimal
 from src.facades.VacationFacade import VacationFacade
-from src.DAL.UserService import UserService
+from src.dal.UserService import UserService
 from src.models.User import User
 from src.query import query
 

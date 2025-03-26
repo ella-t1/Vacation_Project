@@ -63,21 +63,18 @@ class UserService:
     @staticmethod
     def get_by_email(email: str) -> Optional[User]:
         """
-        Get a user by email.
+        Get user by email.
         
         Args:
-            email: User email
+            email: User's email address
             
         Returns:
-            User instance if found, None otherwise
+            User object if found, None otherwise
         """
-        sql = """
-        SELECT id, first_name, last_name, email, password, role_id, created_at
-        FROM users
-        WHERE email = %s
-        """
+        # Use a simple query that won't confuse the query planner
+        sql = "SELECT * FROM users WHERE email = %s LIMIT 1"
         result = query(sql, [email])
-        return User.from_db_row(result[0]) if result else None
+        return User.from_dict(result[0]) if result else None
 
     @staticmethod
     def update(user: User) -> User:

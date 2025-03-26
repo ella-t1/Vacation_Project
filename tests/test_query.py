@@ -57,7 +57,8 @@ def test_no_results(pool):
 
 def test_insert_and_select(pool):
     """Test insert with commit and select."""
-    # Create a temporary table
+    # Drop table if exists and create a new one
+    query('DROP TABLE IF EXISTS test_table', commit=True)
     query('''
         CREATE TEMP TABLE test_table (
             id SERIAL PRIMARY KEY,
@@ -80,7 +81,8 @@ def test_insert_and_select(pool):
 
 def test_transaction_rollback(pool):
     """Test transaction rollback on error."""
-    # Create a temporary table
+    # Drop table if exists and create a new one
+    query('DROP TABLE IF EXISTS test_rollback', commit=True)
     query('''
         CREATE TEMP TABLE test_rollback (
             id SERIAL PRIMARY KEY,

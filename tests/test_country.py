@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime, UTC
 from src.models.Country import Country
-from src.DAL.CountryService import CountryService
+from src.dal.CountryService import CountryService
 from src.config import get_test_config
 from src.query import init_pool, close_pool, query
 

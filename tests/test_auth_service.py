@@ -4,7 +4,7 @@ Tests for the AuthService class.
 import pytest
 from datetime import datetime, timedelta, UTC
 import jwt
-from src.DAL.AuthService import AuthService
+from src.dal.AuthService import AuthService
 from src.models.User import User
 
 
